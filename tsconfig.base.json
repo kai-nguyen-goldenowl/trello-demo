@@ -15,7 +15,15 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@trello-demo/prisma-schema": ["libs/prisma-schema/src/index.ts"]
+      "@trello-demo/prisma-schema": [
+        "libs/prisma-schema/src/index.ts"
+      ],
+      "@trello-demo/shared": [
+        "libs/shared/src/index.ts"
+      ],
+      "@trello-demo/shared/dto": [
+        "libs/shared/src/lib/dto/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
