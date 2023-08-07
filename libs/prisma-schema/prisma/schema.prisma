@@ -1,0 +1,20 @@
+datasource db {
+  provider = "postgresql"
+  url      = "postgres://postgres:@localhost:5432/trello_demo_development"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email String @unique
+  hashedPassword String
+  name String
+
+  @@map("users")
+}
