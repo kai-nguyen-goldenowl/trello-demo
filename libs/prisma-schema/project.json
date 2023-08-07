@@ -28,6 +28,12 @@
       "options": {
         "cwd": "libs/prisma-schema"
       }
+    },
+    "studio": {
+      "command": "npx prisma studio",
+      "options": {
+        "cwd": "libs/prisma-schema"
+      }
     }
   },
   "tags": []

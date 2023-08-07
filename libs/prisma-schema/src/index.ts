@@ -1,3 +1,3 @@
-export * from './prisma/prisma.module';
-export * from './prisma/prisma.service';
-export { Prisma, User } from '@prisma/client';
+export * from './lib/prisma.module';
+export * from './lib/prisma.service';
+export { User, Prisma } from '@prisma/client';
