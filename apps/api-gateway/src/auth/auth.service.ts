@@ -4,9 +4,9 @@ import { CreateUserDto } from '@trello-demo/shared/dto';
 
 @Injectable()
 export class AuthService {
-  constructor(@Inject('AUTH_MICROSERVICE') private readonly authClient: ClientKafka) {}
+  constructor(@Inject('AUTH_MICROSERVICE') private readonly authClient: ClientKafka){}
 
-  async createUser(createUserDto: CreateUserDto) {
-    return await this.authClient.emit('create_user', JSON.stringify(createUserDto));
+  createUser(createUserDto: CreateUserDto) {
+    return this.authClient.send('create_user', JSON.stringify(createUserDto))
   }
 }

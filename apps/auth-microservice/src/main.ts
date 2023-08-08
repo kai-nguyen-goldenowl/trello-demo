@@ -18,13 +18,13 @@ async function bootstrap() {
           brokers: ['localhost:9092'],
         },
         consumer: {
-          groupId: 'auth-consumer'
-        }
-      }
+          groupId: 'auth-consumer-group',
+        },
+      },
     }
-  )
-
+  );
   await app.listen();
 }
+
 
 bootstrap();
