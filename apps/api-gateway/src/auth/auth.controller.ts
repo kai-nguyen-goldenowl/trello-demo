@@ -30,9 +30,11 @@ export class AuthController {
   }
 
   @Post('sign-in')
-  signIn(@Body() createUserDto: CreateUserDto) {
-    const user = this.client.send('create_user', JSON.stringify(createUserDto));
+  async signIn(@Body() createUserDto: CreateUserDto) {
+    const user = await this.client.send('create_user', JSON.stringify(createUserDto)).subscribe((value) => {
+      console.log(value);
+    });
 
-    return user;
+    return true;
   }
 }

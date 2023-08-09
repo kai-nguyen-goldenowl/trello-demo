@@ -12,10 +12,10 @@ export class AppController {
     // const user = await this.userService.createUser(data);
     // return user
     console.log(`Create data client: ${data.email}`)
-  }
-
-  @MessagePattern('create_user.reply')
-  authUser(@Payload() data: any): any {
-    console.log(`Helloooooooooooooo ${data}`);
+    return {
+      data: {
+        message: `Create data client: ${data.email}`
+      }
+    }
   }
 }
