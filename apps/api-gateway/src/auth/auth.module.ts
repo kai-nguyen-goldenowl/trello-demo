@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { JwtStrategy } from './strategy';
+import { PrismaModule } from '@trello-demo/prisma-schema';
 
 @Module({
   imports: [
@@ -17,11 +19,11 @@ import { AuthService } from './auth.service';
           consumer: {
             groupId: 'auth-consumer-group'
           }
-        }
+        },
       },
     ]),
-  ],
-  providers: [AuthService],
+  PrismaModule],
+  providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}

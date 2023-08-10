@@ -1,21 +1,22 @@
 import { Controller, ValidationPipe } from "@nestjs/common";
-import { Ctx, EventPattern, KafkaContext, MessagePattern, Payload } from "@nestjs/microservices";
-import { CreateUserDto } from "@trello-demo/shared";
-import { UserService } from '@trello-demo/data-access-users';
-
+import { MessagePattern, Payload } from "@nestjs/microservices";
+import { AuthDto, CreateUserDto } from "@trello-demo/shared";
+import { AppService } from './app.service';
 @Controller()
 export class AppController {
-  constructor(private userService: UserService){ }
+  constructor(private appService: AppService){ }
 
-  @MessagePattern('create_user')
-  async createUser(@Payload(ValidationPipe) data: CreateUserDto) {
-    // const user = await this.userService.createUser(data);
-    // return user
-    console.log(`Create data client: ${data.email}`)
-    return {
-      data: {
-        message: `Create data client: ${data.email}`
-      }
-    }
+  @MessagePattern('sign_up.user')
+  async signUp(@Payload() CreateUserDto: CreateUserDto) {
+    const response = await this.appService.signUp(CreateUserDto);
+
+    return response
+  }
+
+  @MessagePattern('sign_in.user')
+  async signIn(@Payload() authDto: AuthDto) {
+    const response = await this.appService.signIn(authDto);
+
+    return response
   }
 }

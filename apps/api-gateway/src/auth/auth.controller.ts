@@ -1,40 +1,40 @@
-import { Body, Controller, Get, Inject, OnModuleInit, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { User } from '@prisma/client';
+import { AuthDto, CreateUserDto } from '@trello-demo/shared';
+import { Response } from 'express';
+import { catchError, of } from 'rxjs';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from '@trello-demo/shared';
-import { ClientKafka } from '@nestjs/microservices';
+import { JwtAuthGuard } from './guard/index';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService, @Inject('AUTH_MICROSERVICE') private client: ClientKafka) { }
+  constructor(private authService: AuthService) { }
 
-  // @Client({
-  //   transport: Transport.KAFKA,
-  //   options: {
-  //     client: {
-  //       clientId: 'kafkaSample',
-  //       brokers: ['localhost:9092'],
-  //     },
-  //     consumer: {
-  //       groupId: 'auth-consumer' // Should be the same thing we give in consumer
-  //     }
-  //   }
-  // })
-  // client: ClientKafka;
-
-  async onModuleInit() {
-    // Need to subscribe to topic
-    // so that we can get the response from kafka microservice
-    this.client.subscribeToResponseOf('create_user');
-    await this.client.connect();
-    console.log(this.client)
+  @Post('sign-up')
+  async signUp(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
+    (await this.authService.signUp(createUserDto)).pipe(catchError(val => of({ error: val.message }))).subscribe({
+      next: (user: User) => {
+        res.send({
+          data: user
+        })
+      }
+    })
   }
 
   @Post('sign-in')
-  async signIn(@Body() createUserDto: CreateUserDto) {
-    const user = await this.client.send('create_user', JSON.stringify(createUserDto)).subscribe((value) => {
-      console.log(value);
-    });
+  async SignIn(@Body() authDto: AuthDto, @Res() res: Response) {
+    (await this.authService.signIn(authDto)).pipe(catchError(val => of({error: val.message}))).subscribe({
+      next: (data) => {
+        res.send({
+          data
+        })
+      }
+    })
+  }
 
-    return true;
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  me(){
+    return "It's my profile"
   }
 }
