@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards, Request } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { AuthDto, CreateUserDto } from '@trello-demo/shared';
 import { Response } from 'express';
@@ -34,7 +34,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  me(){
-    return "It's my profile"
+  me(@Request() req){
+    return req.user;
   }
 }
