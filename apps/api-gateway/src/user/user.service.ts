@@ -1,6 +1,6 @@
 import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
-import { EditUserDto } from '../../../../libs/shared/src/lib/dto/edit-user.dto';
+import { EditUserDto } from '@trello-demo/shared';
 
 @Injectable()
 export class UserService implements OnModuleInit, OnModuleDestroy {

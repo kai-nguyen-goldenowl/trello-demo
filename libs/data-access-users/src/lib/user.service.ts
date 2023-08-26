@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "@trello-demo/prisma-schema";
 import { CreateUserDto } from "@trello-demo/shared";
 import * as argon2 from 'argon2';
-import { EditUserDto } from '../../../shared/src/lib/dto/edit-user.dto';
+import { EditUserDto } from '@trello-demo/shared';
 import { RpcException } from '@nestjs/microservices';
 
 @Injectable()

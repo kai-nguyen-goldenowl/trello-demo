@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Put, Req, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JwtAuthGuard } from "../auth/guard";
-import { EditUserDto } from "libs/shared/src/lib/dto/edit-user.dto";
+import { EditUserDto } from '@trello-demo/shared';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)
