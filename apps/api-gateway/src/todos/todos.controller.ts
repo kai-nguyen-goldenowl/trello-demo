@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, ParseUUIDPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guard';
-import { TodoService } from '@trello-demo/data-access-todos';
-import { CreateTodoDto, EditTodoDto } from '@trello-demo/shared';
+import { TodosService } from './todos.service';
+import { CreateTodoDto, EditTodoDto, RequestWithUser } from '@trello-demo/shared';
 
 @Controller('todos')
 @UseGuards(JwtAuthGuard)
 export class TodosController {
-  constructor(private readonly todoService: TodoService) { }
+  constructor(private readonly todoService: TodosService) { }
 
   @Get()
   async getAll(@Req() request){
@@ -14,13 +14,13 @@ export class TodosController {
   }
 
   @Post()
-  createTodo(@Body() body: CreateTodoDto) {
-    return this.todoService.create(body);
+  createTodo(@Req() request: RequestWithUser, @Body() body: CreateTodoDto) {
+    return this.todoService.createTodo(request.user.id, body);
   }
 
   @Put()
   editTodo(@Body() body: EditTodoDto) {
-    return this.todoService.edit(body.id, body)
+    return this.todoService.editTodo(body.id, body)
   }
 
   @Delete()

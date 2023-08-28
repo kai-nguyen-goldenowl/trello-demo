@@ -13,18 +13,18 @@ export class AppController {
     return await this.appService.getAll(payload.ownerId);
   }
 
-  @EventPattern('todos.create')
+  @MessagePattern('todos.create')
   async create(@Payload() payload: CreateTodoDto) {
     return await this.appService.createTodo(payload);
   }
 
-  @EventPattern('todos.edit')
+  @MessagePattern('todos.edit')
   async edit(@Payload() payload: EditTodoDto) {
     return await this.appService.editTodo(payload.ownerId, payload);
   }
 
-  @EventPattern('todos.destroy')
-  async destroy(@Payload('todoId') todoId: string ){
+  @MessagePattern('todos.destroy')
+  async destroy(@Payload('todoId') todoId: string, @Payload('ownerId') ownerId: string ){
     return await this.appService.destroyTodo(ownerId, todoId);
   }
 }

@@ -7,25 +7,25 @@ export class TodosService implements OnModuleDestroy, OnModuleInit {
   constructor(@Inject('TODO_MICROSERVICE') private readonly client: ClientKafka){ }
 
   async onModuleInit() {
-    ['todo.get_all'].map((pattern) => {
+    ['todos.get_all', 'todos.create', 'todos.edit', 'todos.destroy'].map((pattern) => {
       this.client.subscribeToResponseOf(pattern);
     })
   }
 
   async getAll(userId: string){
-    return this.client.send('todo.get_all', JSON.stringify({ownerId: userId}))
+    return this.client.send('todos.get_all', JSON.stringify({ownerId: userId}))
   }
 
   createTodo(ownerId: string, createTodoDto: CreateTodoDto) {
-    return this.client.emit('todo.create', JSON.stringify({ownerId: ownerId, title: createTodoDto.title, description: createTodoDto.description, isDone: createTodoDto.isDone}))
+    return this.client.send('todos.create', JSON.stringify({ownerId: ownerId, title: createTodoDto.title, description: createTodoDto.description, isDone: createTodoDto.isDone}))
   }
 
   editTodo(ownerId: string, createTodoDto: CreateTodoDto) {
-    return this.client.emit('todo.edit', JSON.stringify({ownerId: ownerId, title: createTodoDto.title, description: createTodoDto.description, isDone: createTodoDto.isDone}))
+    return this.client.send('todos.edit', JSON.stringify({ownerId: ownerId, title: createTodoDto.title, description: createTodoDto.description, isDone: createTodoDto.isDone}))
   }
 
   destroy(ownerId: string, todoId) {
-    return this.client.emit('todo.destroy', JSON.stringify({ownerId: ownerId, todoId: todoId}))
+    return this.client.send('todos.destroy', JSON.stringify({ownerId: ownerId, todoId: todoId}))
   }
 
   async onModuleDestroy() {

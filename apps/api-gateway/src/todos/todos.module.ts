@@ -11,7 +11,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'api-gateway',
+            clientId: 'api-gateway-todo',
             brokers: ['localhost:9092'],
           },
           consumer: {
@@ -23,5 +23,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   ],
   providers: [TodosService],
   controllers: [TodosController],
+  exports: [TodosService]
 })
 export class TodosModule {}

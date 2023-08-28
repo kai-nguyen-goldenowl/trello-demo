@@ -49,7 +49,7 @@ export class UserService {
       throw new RpcException('User invalid');
     }
 
-    let isChangePassword: boolean = false;
+    let isChangePassword = false;
     if(editUserDto?.currentPassword && editUserDto?.newPassword && editUserDto?.newPasswordConfirm){
       isChangePassword = true;
     }
