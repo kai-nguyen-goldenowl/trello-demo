@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RpcException } from "@nestjs/microservices";
-import { Todo } from "@prisma/client";
+import { LocalFile, Todo } from "@prisma/client";
 import { PrismaService } from "@trello-demo/prisma-schema";
 import { CreateTodoDto, EditTodoDto } from "@trello-demo/shared";
 import { Prisma } from "@prisma/client";
@@ -64,18 +64,37 @@ export class TodoService {
 
       return todo;
     } catch(error) {
-      throw new RpcException('Record not found');
+      if(error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new RpcException(error.message)
+      } else {
+        throw new RpcException('Record not found')
+      }
     }
   }
 
   async destroy(ownerId: string, todoId: string): Promise<Todo>{
     try {
-      const todo = await this.prismaService.todo.delete({
+      const deleteTodo = this.prismaService.todo.delete({
         where: {
           id: todoId,
           ownerId: ownerId
+        },
+        include: {
+          localFiles: true
         }
       })
+
+      const deleteLocalFile = this.prismaService.localFile.deleteMany({
+        where: {
+          todos: {
+            every: {
+              id: todoId
+            }
+          }
+        }
+      })
+
+      const [todo] = await this.prismaService.$transaction([deleteTodo, deleteLocalFile]);
 
       return todo;
     } catch(err) {
