@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, ParseUUIDPipe, Post, Put, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpException, ParseUUIDPipe, Post, Put, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreateTodoDto, EditTodoDto, LocalFilesInterceptor, RequestWithUser } from '@trello-demo/shared';
 import { diskStorage } from 'multer';
@@ -19,7 +19,17 @@ export class TodosController {
   @Post()
   @UseInterceptors(LocalFilesInterceptor({
     fieldName: 'files',
-    path: '/todos'
+    path: '/todos',
+    fileFilter: (req, file, cb) => {
+      if(!file.mimetype.includes('image')){
+        return cb(new BadRequestException('Provide a valid image'), false)
+      }
+
+      cb(null, true);
+    },
+    limits: {
+      fileSize: Math.pow(10240, 2) // 1MB
+    }
   }))
   createTodo(@Req() request: RequestWithUser, @Body() body: CreateTodoDto, @UploadedFiles() files: Array<Express.Multer.File>) {
     return this.todoService.createTodo(request.user.id, body, files);

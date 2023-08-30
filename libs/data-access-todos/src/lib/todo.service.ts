@@ -13,6 +13,9 @@ export class TodoService {
     const todos = await this.prismaService.todo.findMany({
       where: {
         ownerId: ownerId
+      },
+      include: {
+        localFiles: true
       }
     })
 
