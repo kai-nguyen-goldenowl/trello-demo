@@ -3,6 +3,7 @@ import { RpcException } from "@nestjs/microservices";
 import { Todo } from "@prisma/client";
 import { PrismaService } from "@trello-demo/prisma-schema";
 import { CreateTodoDto, EditTodoDto } from "@trello-demo/shared";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class TodoService {
@@ -19,12 +20,26 @@ export class TodoService {
   }
 
   async create(createTodoDto: CreateTodoDto): Promise<Todo> {
+    let fileData: Array<any> = [];
+    if(createTodoDto.localFiles){
+      fileData =  createTodoDto.localFiles.map((file) => {
+        return {
+          path: file.path,
+          filename: file.filename,
+          mimetype: file.mimetype
+        }
+      })
+    }
+
     const todo = await this.prismaService.todo.create({
       data: {
         title: createTodoDto.title,
         description: createTodoDto.description,
         ownerId: createTodoDto.ownerId,
-        isDone: createTodoDto.isDone
+        isDone: !!createTodoDto.isDone,
+        localFiles: {
+          create: fileData
+        }
       }
     });
 
@@ -60,9 +75,12 @@ export class TodoService {
       })
 
       return todo;
-    } catch {
-        throw new RpcException('Record not found');
-
+    } catch(err) {
+      if(err instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new RpcException(err.message)
+      } else {
+        throw new RpcException('Record not found')
+      }
     }
   }
 }

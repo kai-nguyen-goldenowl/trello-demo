@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 
-import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { CreateTodoDto, EditTodoDto } from '@trello-demo/shared';
 

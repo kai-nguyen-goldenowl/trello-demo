@@ -1,4 +1,5 @@
 import { IsOptional, IsNotEmpty, IsString, IsBoolean } from "class-validator";
+import { CreateLocalFileDto } from "../local-file/create-local-file.dto";
 
 export class CreateTodoDto {
   @IsString()
@@ -8,11 +9,13 @@ export class CreateTodoDto {
   @IsString()
   description: string;
 
-  @IsBoolean()
   @IsOptional()
   isDone: boolean;
 
   @IsString()
   @IsNotEmpty()
   ownerId: string;
+
+  @IsOptional()
+  localFiles?: CreateLocalFileDto[];
 }

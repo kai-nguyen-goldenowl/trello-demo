@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, ParseUUIDPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, ParseUUIDPipe, Post, Put, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { CreateTodoDto, EditTodoDto, LocalFilesInterceptor, RequestWithUser } from '@trello-demo/shared';
+import { diskStorage } from 'multer';
 import { JwtAuthGuard } from '../auth/guard';
 import { TodosService } from './todos.service';
-import { CreateTodoDto, EditTodoDto, RequestWithUser } from '@trello-demo/shared';
+import { catchError } from 'rxjs';
 
 @Controller('todos')
 @UseGuards(JwtAuthGuard)
@@ -14,8 +17,12 @@ export class TodosController {
   }
 
   @Post()
-  createTodo(@Req() request: RequestWithUser, @Body() body: CreateTodoDto) {
-    return this.todoService.createTodo(request.user.id, body);
+  @UseInterceptors(LocalFilesInterceptor({
+    fieldName: 'files',
+    path: '/todos'
+  }))
+  createTodo(@Req() request: RequestWithUser, @Body() body: CreateTodoDto, @UploadedFiles() files: Array<Express.Multer.File>) {
+    return this.todoService.createTodo(request.user.id, body, files);
   }
 
   @Put()
@@ -25,6 +32,10 @@ export class TodosController {
 
   @Delete()
   removeTodo(@Req() request, @Body('todoId', ParseUUIDPipe) todoId: string ) {
-    return this.todoService.destroy(request.user.id, todoId)
+    return this.todoService.destroy(request.user.id, todoId).pipe(
+      catchError((val) => {
+        throw new HttpException(val.message, 400);
+      })
+    )
   }
 }

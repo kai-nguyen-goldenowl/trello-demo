@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@trello-demo/data-access-local-files": [
+        "libs/data-access-local-files/src/index.ts"
+      ],
       "@trello-demo/data-access-todos": ["libs/data-access-todos/src/index.ts"],
       "@trello-demo/data-access-users": ["libs/data-access-users/src/index.ts"],
       "@trello-demo/prisma-schema": ["libs/prisma-schema/src/index.ts"],

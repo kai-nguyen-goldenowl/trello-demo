@@ -28,8 +28,22 @@ model Todo {
   title String
   description String
   isDone Boolean @default(false)
-  owner User @relation(fields: [ownerId], references: [id])
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String
 
+  localFiles LocalFile[]
+
   @@map("todos")
+}
+
+model LocalFile {
+  id String @id @default(uuid())
+
+  path String
+  filename String
+  mimetype String
+
+  todos Todo[]
+
+  @@map("local_files")
 }
