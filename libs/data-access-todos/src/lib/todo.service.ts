@@ -1,9 +1,8 @@
-import { Injectable, UploadedFiles } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { RpcException } from "@nestjs/microservices";
-import { LocalFile, Todo } from "@prisma/client";
+import { LocalFile, Prisma, Todo } from "@prisma/client";
 import { PrismaService } from "@trello-demo/prisma-schema";
-import { CreateLocalFileDto, CreateTodoDto, EditTodoDto } from "@trello-demo/shared";
-import { Prisma } from "@prisma/client";
+import { CreateLocalFileDto, CreateTodoDto, EditTodoDto, MappingPrismaErrorToHttpError } from "@trello-demo/shared";
 
 @Injectable()
 export class TodoService {
@@ -69,7 +68,7 @@ export class TodoService {
       return todo;
     } catch(error) {
       if(error instanceof Prisma.PrismaClientKnownRequestError) {
-        throw new RpcException(error.message)
+        throw MappingPrismaErrorToHttpError(error)
       } else {
         throw new RpcException('Record not found')
       }
@@ -91,7 +90,7 @@ export class TodoService {
       return todo;
     } catch(err) {
       if(err instanceof Prisma.PrismaClientKnownRequestError) {
-        throw new RpcException(err.message)
+        throw MappingPrismaErrorToHttpError(err)
       } else {
         throw new RpcException('Record not found')
       }
@@ -113,9 +112,9 @@ export class TodoService {
       return localFile
     } catch(err) {
       if(err instanceof Prisma.PrismaClientKnownRequestError) {
-        throw new RpcException(err.message)
+        throw MappingPrismaErrorToHttpError(err)
       } else {
-        throw new RpcException('Record not found')
+        throw new RpcException(new InternalServerErrorException('Server Error'))
       }
     }
   }
@@ -133,7 +132,7 @@ export class TodoService {
       return localFile;
     } catch(err) {
       if(err instanceof Prisma.PrismaClientKnownRequestError) {
-        throw new RpcException(err.message)
+        throw MappingPrismaErrorToHttpError(err)
       } else {
         throw new RpcException('Record not found')
       }

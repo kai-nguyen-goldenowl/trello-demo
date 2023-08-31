@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { CreateLocalFileDto, CreateTodoDto, EditTodoDto } from '@trello-demo/shared';
 
@@ -23,7 +23,7 @@ export class AppController {
     return await this.appService.editTodo(payload.ownerId, payload);
   }
 
-  @MessagePattern('todos.destroy')
+  @EventPattern('todos.destroy')
   async destroy(@Payload('todoId') todoId: string, @Payload('ownerId') ownerId: string){
     return await this.appService.destroyTodo(ownerId, todoId);
   }

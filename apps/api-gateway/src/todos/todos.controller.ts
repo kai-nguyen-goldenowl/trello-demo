@@ -3,6 +3,7 @@ import { CreateTodoDto, EditTodoDto, LocalFilesInterceptor, RequestWithUser } fr
 import { catchError } from 'rxjs';
 import { JwtAuthGuard } from '../auth/guard';
 import { TodosService } from './todos.service';
+import { TodoGuard } from './guard';
 
 @Controller('todos')
 @UseGuards(JwtAuthGuard)
@@ -34,12 +35,14 @@ export class TodosController {
   }
 
   @Put()
-  editTodo(@Body() body: EditTodoDto) {
-    return this.todoService.editTodo(body.id, body)
+  @UseGuards(TodoGuard)
+  async editTodo(@Body() body: EditTodoDto) {
+    return await this.todoService.editTodo(body.id, body)
   }
 
+  @UseGuards(TodoGuard)
   @Delete()
-  removeTodo(@Req() request, @Body('todoId', ParseUUIDPipe) todoId: string ) {
+  async removeTodo(@Req() request, @Body('todoId', ParseUUIDPipe) todoId: string ) {
     return this.todoService.destroy(request.user.id, todoId).pipe(
       catchError((val) => {
         throw new HttpException(val.message, 400);
@@ -47,7 +50,9 @@ export class TodosController {
     )
   }
 
+
   @Post(':id/upload')
+  @UseGuards(TodoGuard)
   @UseInterceptors(LocalFilesInterceptor({
     fieldName: 'file',
     path: '/todos'
@@ -61,6 +66,7 @@ export class TodosController {
   }
 
   @Delete(':id/upload/:fileId')
+  @UseGuards(TodoGuard)
   deleteFile(@Param('id') todoId: string, @Param('fileId') fileId: string) {
     return this.todoService.deleteFile(todoId, fileId)
   }

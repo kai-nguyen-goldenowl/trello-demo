@@ -1,6 +1,7 @@
 import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { CreateTodoDto, CreateLocalFileDto } from '@trello-demo/shared';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class TodosService implements OnModuleDestroy, OnModuleInit {
@@ -29,7 +30,7 @@ export class TodosService implements OnModuleDestroy, OnModuleInit {
   }
 
   editTodo(ownerId: string, createTodoDto: CreateTodoDto) {
-    return this.client.send('todos.edit', JSON.stringify({ownerId: ownerId, title: createTodoDto.title, description: createTodoDto.description, isDone: createTodoDto.isDone}))
+    return lastValueFrom(this.client.send('todos.edit', JSON.stringify({ownerId: ownerId, title: createTodoDto.title, description: createTodoDto.description, isDone: createTodoDto.isDone})))
   }
 
   destroy(ownerId: string, todoId: string) {
