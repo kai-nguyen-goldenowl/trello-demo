@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UploadedFiles } from '@nestjs/common';
 import { RpcException } from "@nestjs/microservices";
 import { LocalFile, Todo } from "@prisma/client";
 import { PrismaService } from "@trello-demo/prisma-schema";
-import { CreateTodoDto, EditTodoDto } from "@trello-demo/shared";
+import { CreateLocalFileDto, CreateTodoDto, EditTodoDto } from "@trello-demo/shared";
 import { Prisma } from "@prisma/client";
 
 @Injectable()
@@ -25,11 +25,12 @@ export class TodoService {
   async create(createTodoDto: CreateTodoDto): Promise<Todo> {
     let fileData: Array<any> = [];
     if(createTodoDto.localFiles){
-      fileData =  createTodoDto.localFiles.map((file) => {
+      fileData =  createTodoDto.localFiles.map((file: CreateLocalFileDto) => {
         return {
           path: file.path,
           filename: file.filename,
-          mimetype: file.mimetype
+          mimetype: file.mimetype,
+          ownerType: 'Todo'
         }
       })
     }
@@ -43,6 +44,9 @@ export class TodoService {
         localFiles: {
           create: fileData
         }
+      },
+      include: {
+        localFiles: true
       }
     });
 
@@ -74,7 +78,7 @@ export class TodoService {
 
   async destroy(ownerId: string, todoId: string): Promise<Todo>{
     try {
-      const deleteTodo = this.prismaService.todo.delete({
+      const todo = this.prismaService.todo.delete({
         where: {
           id: todoId,
           ownerId: ownerId
@@ -84,19 +88,49 @@ export class TodoService {
         }
       })
 
-      const deleteLocalFile = this.prismaService.localFile.deleteMany({
-        where: {
-          todos: {
-            every: {
-              id: todoId
-            }
-          }
+      return todo;
+    } catch(err) {
+      if(err instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new RpcException(err.message)
+      } else {
+        throw new RpcException('Record not found')
+      }
+    }
+  }
+
+  async uploadFile(todoId: string, file: CreateLocalFileDto): Promise<LocalFile>{
+    try {
+      const localFile = this.prismaService.localFile.create({
+        data: {
+          path: file.path,
+          filename: file.filename,
+          mimetype: file.mimetype,
+          ownerId: todoId,
+          ownerType: 'Todo'
         }
       })
 
-      const [todo] = await this.prismaService.$transaction([deleteTodo, deleteLocalFile]);
+      return localFile
+    } catch(err) {
+      if(err instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new RpcException(err.message)
+      } else {
+        throw new RpcException('Record not found')
+      }
+    }
+  }
 
-      return todo;
+  async deleteFile(todoId: string, fileId: string) {
+    try {
+      const localFile = this.prismaService.localFile.delete({
+        where: {
+          id: fileId,
+          ownerId: todoId,
+          ownerType: 'Todo'
+        }
+      })
+
+      return localFile;
     } catch(err) {
       if(err instanceof Prisma.PrismaClientKnownRequestError) {
         throw new RpcException(err.message)

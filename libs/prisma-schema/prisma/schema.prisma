@@ -36,6 +36,10 @@ model Todo {
   @@map("todos")
 }
 
+enum LocalFileType {
+  Todo
+}
+
 model LocalFile {
   id String @id @default(uuid())
 
@@ -43,7 +47,10 @@ model LocalFile {
   filename String
   mimetype String
 
-  todos Todo[]
+  todo Todo? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  ownerId String
+  ownerType LocalFileType
 
   @@map("local_files")
 }

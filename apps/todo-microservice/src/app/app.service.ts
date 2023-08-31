@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Todo } from '@prisma/client';
 import { TodoService } from '@trello-demo/data-access-todos';
-import { CreateTodoDto, EditTodoDto } from '@trello-demo/shared';
+import { CreateLocalFileDto, CreateTodoDto, EditTodoDto } from '@trello-demo/shared';
 
 @Injectable()
 export class AppService {
@@ -21,5 +21,13 @@ export class AppService {
 
   async destroyTodo(ownerId: string, todoId: string): Promise<Todo> {
     return await this.todoService.destroy(ownerId, todoId);
+  }
+
+  async uploadFile(todoId: string, file: CreateLocalFileDto){
+    return await this.todoService.uploadFile(todoId, file)
+  }
+
+  async deleteFile(todoId: string, fileId: string) {
+    return await this.todoService.deleteFile(todoId, fileId)
   }
 }

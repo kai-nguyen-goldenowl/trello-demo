@@ -1,4 +1,8 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+
+enum LocalFileOwnerType {
+  Todo
+}
 
 export class CreateLocalFileDto {
   @IsString()
@@ -12,4 +16,13 @@ export class CreateLocalFileDto {
   @IsString()
   @IsNotEmpty()
   mimetype: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  ownerId?: string;
+
+  @IsString()
+  @IsOptional()
+  ownerType?: LocalFileOwnerType;
 }
