@@ -30,4 +30,8 @@ export class AppService {
   async deleteFile(todoId: string, fileId: string) {
     return await this.todoService.deleteFile(todoId, fileId)
   }
+
+  autoCheckDoneTodos(date: Date) {
+    return this.todoService.autoCheckDoneTodos(date)
+  }
 }

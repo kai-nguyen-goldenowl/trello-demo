@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class EditTodoDto {
   @IsString()
@@ -20,4 +20,12 @@ export class EditTodoDto {
   @IsString()
   @IsNotEmpty()
   ownerId: string;
+
+  @IsDateString()
+  @IsOptional()
+  dueDate: Date;
+
+  @IsBoolean()
+  @IsOptional()
+  autoDone: boolean;
 }

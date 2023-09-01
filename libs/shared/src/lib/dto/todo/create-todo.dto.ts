@@ -1,4 +1,4 @@
-import { IsOptional, IsNotEmpty, IsString, IsBoolean } from "class-validator";
+import { IsDateString, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { CreateLocalFileDto } from "../local-file/create-local-file.dto";
 
 export class CreateTodoDto {
@@ -11,6 +11,13 @@ export class CreateTodoDto {
 
   @IsOptional()
   isDone: boolean;
+
+  @IsDateString()
+  @IsOptional()
+  dueDate: Date;
+
+  @IsOptional()
+  autoDone: boolean;
 
   @IsString()
   @IsNotEmpty()

@@ -23,7 +23,7 @@ export class AppController {
     return await this.appService.editTodo(payload.ownerId, payload);
   }
 
-  @EventPattern('todos.destroy')
+  @MessagePattern('todos.destroy')
   async destroy(@Payload('todoId') todoId: string, @Payload('ownerId') ownerId: string){
     return await this.appService.destroyTodo(ownerId, todoId);
   }
@@ -36,5 +36,11 @@ export class AppController {
   @MessagePattern('todos.delete_file')
   async deleteFile(@Payload('todoId') todoId: string, @Payload('fileId') fileId: string) {
     return await this.appService.deleteFile(todoId, fileId)
+  }
+
+  @EventPattern('todos.auto_check_done')
+  autoDone(@Payload('date') date: Date){
+    console.log(`Execute in microservice with ${date}`)
+    return this.appService.autoCheckDoneTodos(date)
   }
 }

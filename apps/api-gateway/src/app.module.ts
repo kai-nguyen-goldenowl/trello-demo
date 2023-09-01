@@ -4,11 +4,15 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { TodosModule } from './todos/todos.module';
 import { LoggerModule } from 'nestjs-pino';
+import { ScheduleModule } from '@nestjs/schedule';
+import { JobModule } from './jobs/job.module';
 
 @Module({
   imports: [
+    JobModule,
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     UserModule,
     TodosModule,
     LoggerModule.forRoot({

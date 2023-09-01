@@ -24,7 +24,7 @@ export class TodoService {
   async create(createTodoDto: CreateTodoDto): Promise<Todo> {
     let fileData: Array<any> = [];
     if(createTodoDto.localFiles){
-      fileData =  createTodoDto.localFiles.map((file: CreateLocalFileDto) => {
+      fileData = createTodoDto.localFiles.map((file: CreateLocalFileDto) => {
         return {
           path: file.path,
           filename: file.filename,
@@ -40,6 +40,8 @@ export class TodoService {
         description: createTodoDto.description,
         ownerId: createTodoDto.ownerId,
         isDone: !!createTodoDto.isDone,
+        autoDone: !!createTodoDto.autoDone,
+        dueDate: new Date(createTodoDto.dueDate),
         localFiles: {
           create: fileData
         }
@@ -130,6 +132,28 @@ export class TodoService {
       })
 
       return localFile;
+    } catch(err) {
+      if(err instanceof Prisma.PrismaClientKnownRequestError) {
+        throw MappingPrismaErrorToHttpError(err)
+      } else {
+        throw new RpcException('Record not found')
+      }
+    }
+  }
+
+  async autoCheckDoneTodos(date: Date){
+    try {
+      console.log(`Updating with ${date}`)
+      await this.prismaService.todo.updateMany({
+        where: {
+          autoDone: true,
+          isDone: false,
+          dueDate: new Date(date)
+        },
+        data: {
+          isDone: true
+        }
+      })
     } catch(err) {
       if(err instanceof Prisma.PrismaClientKnownRequestError) {
         throw MappingPrismaErrorToHttpError(err)

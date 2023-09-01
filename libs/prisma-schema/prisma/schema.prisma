@@ -27,6 +27,8 @@ model Todo {
 
   title String
   description String
+  dueDate DateTime
+  autoDone Boolean @default(false)
   isDone Boolean @default(false)
   owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String

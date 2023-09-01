@@ -26,7 +26,7 @@ export class TodosService implements OnModuleDestroy, OnModuleInit {
       }
     })
 
-    return this.client.send('todos.create', JSON.stringify({ownerId: ownerId, title: createTodoDto.title, description: createTodoDto.description, isDone: createTodoDto.isDone, localFiles: fileList}))
+    return this.client.send('todos.create', JSON.stringify({ownerId: ownerId, title: createTodoDto.title, description: createTodoDto.description, isDone: createTodoDto.isDone, localFiles: fileList, dueDate: createTodoDto.dueDate, autoDone: createTodoDto.autoDone}))
   }
 
   editTodo(ownerId: string, createTodoDto: CreateTodoDto) {
