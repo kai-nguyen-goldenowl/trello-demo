@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from '@trello-demo/prisma-schema';
+import { PrismaModule } from '@trello-demo/prisma-schema';
 import { LocalFilesService } from './local-files.service';
 
 @Module({
-  imports: [PrismaService],
+  imports: [PrismaModule],
   controllers: [],
   providers: [LocalFilesService],
   exports: [LocalFilesService],

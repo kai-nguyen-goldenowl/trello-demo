@@ -6,6 +6,7 @@ import { TodosModule } from './todos/todos.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JobModule } from './jobs/job.module';
+import { LocalFileModule } from './local-file/local-file.module';
 
 @Module({
   imports: [
@@ -21,10 +22,11 @@ import { JobModule } from './jobs/job.module';
           target: 'pino-pretty',
           options: {
             singleLine: true,
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    }),
+    LocalFileModule,
   ],
   controllers: [],
   providers: [],

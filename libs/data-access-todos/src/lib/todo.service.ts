@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { RpcException } from "@nestjs/microservices";
 import { LocalFile, Prisma, Todo } from "@prisma/client";
 import { PrismaService } from "@trello-demo/prisma-schema";
-import { CreateLocalFileDto, CreateTodoDto, EditTodoDto, MappingPrismaErrorToHttpError } from "@trello-demo/shared";
+import { CreateLocalFileDto, CreateTodoDto, EditTodoDto, MappingPrismaErrorToHttpError, removeFileFromBucket } from "@trello-demo/shared";
 
 @Injectable()
 export class TodoService {
@@ -79,7 +79,7 @@ export class TodoService {
 
   async destroy(ownerId: string, todoId: string): Promise<Todo>{
     try {
-      const todo = this.prismaService.todo.delete({
+      const todo = await this.prismaService.todo.delete({
         where: {
           id: todoId,
           ownerId: ownerId
@@ -87,6 +87,10 @@ export class TodoService {
         include: {
           localFiles: true
         }
+      })
+
+      todo.localFiles.forEach((localFile) => {
+        removeFileFromBucket(localFile.path)
       })
 
       return todo;
@@ -123,7 +127,7 @@ export class TodoService {
 
   async deleteFile(todoId: string, fileId: string) {
     try {
-      const localFile = this.prismaService.localFile.delete({
+      const localFile = await this.prismaService.localFile.delete({
         where: {
           id: fileId,
           ownerId: todoId,
@@ -131,6 +135,7 @@ export class TodoService {
         }
       })
 
+      removeFileFromBucket(localFile.path)
       return localFile;
     } catch(err) {
       if(err instanceof Prisma.PrismaClientKnownRequestError) {
