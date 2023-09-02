@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Delete, Get, HttpException, Param, ParseUUIDPipe, Post, Put, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
-import { CreateTodoDto, EditTodoDto, LocalFilesInterceptor, RequestWithUser } from '@trello-demo/shared';
+import { CreateTodoDto, EditTodoDto, LocalFilesInterceptor, RequestWithUser, User } from '@trello-demo/shared';
 import { catchError } from 'rxjs';
 import { JwtAuthGuard } from '../auth/guard';
 import { TodosService } from './todos.service';
@@ -11,8 +11,8 @@ export class TodosController {
   constructor(private readonly todoService: TodosService) { }
 
   @Get()
-  async getAll(@Req() request){
-    return await this.todoService.getAll(request.user.id);
+  async getAll(@User('id') userId: string){
+    return await this.todoService.getAll(userId);
   }
 
   @Post()
@@ -30,8 +30,8 @@ export class TodosController {
       fileSize: Math.pow(10240, 2) // 1MB
     }
   }))
-  createTodo(@Req() request: RequestWithUser, @Body() body: CreateTodoDto, @UploadedFiles() files: Array<Express.Multer.File>) {
-    return this.todoService.createTodo(request.user.id, body, files);
+  createTodo(@User('id') userId: string, @Body() body: CreateTodoDto, @UploadedFiles() files: Array<Express.Multer.File>) {
+    return this.todoService.createTodo(userId, body, files);
   }
 
   @Put()
@@ -42,8 +42,8 @@ export class TodosController {
 
   @UseGuards(TodoGuard)
   @Delete()
-  async removeTodo(@Req() request, @Body('todoId', ParseUUIDPipe) todoId: string ) {
-    return this.todoService.destroy(request.user.id, todoId).pipe(
+  async removeTodo(@User('id') userId: string, @Body('todoId', ParseUUIDPipe) todoId: string ) {
+    return this.todoService.destroy(userId, todoId).pipe(
       catchError((val) => {
         throw new HttpException(val.message, 400);
       })

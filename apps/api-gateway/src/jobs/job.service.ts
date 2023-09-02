@@ -6,7 +6,7 @@ import { Cron, CronExpression } from "@nestjs/schedule";
 export class JobService {
   constructor(@Inject('TODO_MICROSERVICE') private readonly clientKafka: ClientKafka){ }
 
-  @Cron(CronExpression.EVERY_1_day)
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   autoCheckDoneTodoJobs(){
     const currentDate = new Date().toISOString().slice(0,10);
     console.log(currentDate)
