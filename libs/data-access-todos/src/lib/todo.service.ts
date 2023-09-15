@@ -8,15 +8,32 @@ import { CreateLocalFileDto, CreateTodoDto, EditTodoDto, MappingPrismaErrorToHtt
 export class TodoService {
   constructor(private prismaService: PrismaService) { }
 
-  async getAll(ownerId: string): Promise<Todo[]> {
-    const todos = await this.prismaService.todo.findMany({
-      where: {
-        ownerId: ownerId
-      },
-      include: {
-        localFiles: true
-      }
-    })
+  async getAll(ownerId: string, query: { take?: number, skip?: number }): Promise<Todo[]> {
+    const { take, skip } = query;
+    let todos;
+
+    if(isNaN(Number(skip))){
+      todos = await this.prismaService.todo.findMany({
+        take: Number(take),
+        where: {
+          ownerId: ownerId
+        },
+        include: {
+          localFiles: true
+        }
+      })
+    } else {
+      todos = await this.prismaService.todo.findMany({
+        take: Number(take),
+        skip: Number(skip),
+        where: {
+          ownerId: ownerId
+        },
+        include: {
+          localFiles: true
+        }
+      })
+    }
 
     return todos;
   }
@@ -148,7 +165,6 @@ export class TodoService {
 
   async autoCheckDoneTodos(date: Date){
     try {
-      console.log(`Updating with ${date}`)
       await this.prismaService.todo.updateMany({
         where: {
           autoDone: true,

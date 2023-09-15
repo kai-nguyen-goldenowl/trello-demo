@@ -13,8 +13,8 @@ export class TodosService implements OnModuleDestroy, OnModuleInit {
     })
   }
 
-  async getAll(userId: string){
-    return this.client.send('todos.get_all', JSON.stringify({ownerId: userId}))
+  async getAll(userId: string, query: { take?:number, skip?:number }){
+    return this.client.send('todos.get_all', JSON.stringify({ownerId: userId, query: query }))
   }
 
   async createTodo(ownerId: string, createTodoDto: CreateTodoDto, files: Express.Multer.File[]) {

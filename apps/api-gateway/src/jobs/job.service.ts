@@ -9,7 +9,7 @@ export class JobService {
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   autoCheckDoneTodoJobs(){
     const currentDate = new Date().toISOString().slice(0,10);
-    console.log(currentDate)
+
     this.clientKafka.emit('todos.auto_check_done', { date: currentDate })
   }
 }

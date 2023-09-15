@@ -10,7 +10,7 @@ export class AppController {
 
   @MessagePattern('todos.get_all')
   async getAll(@Payload() payload){
-    return await this.appService.getAll(payload.ownerId);
+    return await this.appService.getAll(payload.ownerId, payload.query);
   }
 
   @MessagePattern('todos.create')
@@ -40,7 +40,6 @@ export class AppController {
 
   @EventPattern('todos.auto_check_done')
   autoDone(@Payload('date') date: Date){
-    console.log(`Execute in microservice with ${date}`)
     return this.appService.autoCheckDoneTodos(date)
   }
 }

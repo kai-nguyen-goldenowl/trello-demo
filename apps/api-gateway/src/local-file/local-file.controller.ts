@@ -17,7 +17,7 @@ export class LocalFileController {
   }
 
   @Get()
-  getFIle(@Body() localFile: LocalFileDto, @Res({ passthrough: true }) response: Response) {
+  getFile(@Body() localFile: LocalFileDto, @Res({ passthrough: true }) response: Response) {
     const stream = createReadStream(join(process.cwd(), localFile.path))
 
     response.set({

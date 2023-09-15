@@ -7,8 +7,8 @@ import { CreateLocalFileDto, CreateTodoDto, EditTodoDto } from '@trello-demo/sha
 export class AppService {
   constructor(private readonly todoService: TodoService ) {}
 
-  async getAll(ownerId: string): Promise<Todo[]>{
-    return await this.todoService.getAll(ownerId);
+  async getAll(ownerId: string, query: { take?: number, skip?: number }): Promise<Todo[]>{
+    return await this.todoService.getAll(ownerId, query);
   }
 
   async createTodo(createTodoDto: CreateTodoDto): Promise<Todo> {

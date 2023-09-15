@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpException, Param, ParseUUIDPipe, Post, Put, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpException, Param, ParseUUIDPipe, Post, Put, Query, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CreateTodoDto, EditTodoDto, LocalFilesInterceptor, RequestWithUser, User } from '@trello-demo/shared';
 import { catchError } from 'rxjs';
 import { JwtAuthGuard } from '../auth/guard';
@@ -11,8 +11,8 @@ export class TodosController {
   constructor(private readonly todoService: TodosService) { }
 
   @Get()
-  async getAll(@User('id') userId: string){
-    return await this.todoService.getAll(userId);
+  async getAll(@User('id') userId: string, @Query() query: { skip?: number, take?: number }){
+    return await this.todoService.getAll(userId, query);
   }
 
   @Post()
